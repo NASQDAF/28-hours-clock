@@ -1,4 +1,5 @@
-﻿#include <windows.h>
+﻿#define _CRT_SECURE_NO_WARNINGS
+#include <windows.h>
 #include <time.h>
 #include <string>
 #include <thread>
@@ -6,13 +7,18 @@
 
 #define ClockLabel 6004
 static HWND Label;
-unsigned short hour = 0;
 SYSTEMTIME lt;
-std::tm td{};
-int today = td.tm_wday;
-uint16_t h = 0;
-inline short get28hour() {
-	if (lt.wHour == 0)	today = td.tm_wday;
+
+time_t rawtime;
+tm * td;
+uint16_t today, h = 0;
+
+int get28hour() {
+	 if (lt.wHour == 0) {
+		 time(&rawtime);
+		 td = localtime(&rawtime);
+		 today = (td->tm_wday + 6)%7;
+	 }
 	return (today * 24 + lt.wHour) % 28;
 }
 void update_Time() {
@@ -43,6 +49,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR pCmdLine, int nCmdShow)
 	ShowWindow(hwnd, nCmdShow);
 	MSG Resp = {};
 	GetLocalTime(&lt);
+	time(&rawtime);
+	td = localtime(&rawtime);
+	today = (td->tm_wday + 6) % 7;
 	h = get28hour();
 	std::thread t([&]() {update_Time(); });
 	t.detach();
