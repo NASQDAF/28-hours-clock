@@ -12,10 +12,8 @@ std::tm td{};
 int today = td.tm_wday;
 uint16_t h = 0;
 inline short get28hour() {
-	if (lt.wHour == 0)			today = td.tm_wday;
-	if (lt.wHour < 4 * today)	hour = lt.wHour + (24 - 4 * today);
-	else						hour = lt.wHour - 4 * today;
-	return hour;
+	if (lt.wHour == 0)	today = td.tm_wday;
+	return (today * 24 + lt.wHour) % 28;
 }
 void update_Time() {
 	while (1) {
