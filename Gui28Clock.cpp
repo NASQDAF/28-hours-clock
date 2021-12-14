@@ -1,14 +1,13 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
+#define ClockLabel	6004
 #include <windows.h>
 #include <time.h>
 #include <string>
 #include <thread>
 #include <chrono>
 
-#define ClockLabel 6004
 static HWND Label;
 SYSTEMTIME lt;
-
 time_t rawtime;
 tm * td;
 uint16_t today, h = 0;
@@ -36,7 +35,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR pCmdLine, int nCmdShow)
 	WNDCLASS wc = {};
 	wc.lpfnWndProc = WindowProc;
 	wc.hInstance = hInstance;
+	wc.style = CS_DBLCLKS;
 	wc.lpszClassName = CLASS_NAME;
+	wc.hCursor = LoadCursor(NULL, IDC_HAND);
 	RegisterClass(&wc);
 	HWND hwnd = CreateWindowEx(WS_EX_TOPMOST| WS_EX_TOOLWINDOW,
 		CLASS_NAME,
@@ -78,6 +79,9 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 			FillRect(hdc, &ps.rcPaint, (HBRUSH)(COLOR_WINDOW + 1));
 			EndPaint(hwnd, &ps);
 		}
+		case WM_LBUTTONDBLCLK:
+			if (uMsg == WM_LBUTTONDOWN || uMsg == WM_LBUTTONDBLCLK)
+				exit(0);
 		return 0;
 	}
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
